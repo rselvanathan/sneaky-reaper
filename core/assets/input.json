@@ -1,0 +1,74 @@
+{
+  "contexts" :
+  [
+    {
+      "contextName" : "menu",
+      "actions" : [
+        {
+          "key" : 19,
+          "action" : "MENU_UP"
+        },
+        {
+          "key" : 20,
+          "action" : "MENU_DOWN"
+        },
+        {
+          "key" : 51,
+          "action" : "MENU_UP"
+        },
+        {
+          "key" : 47,
+          "action" : "MENU_DOWN"
+        },
+        {
+          "key" : 66,
+          "action" : "SELECT"
+        }
+      ],
+      "states" : []
+    },
+    {
+      "contextName" : "game",
+      "actions" : [
+        {
+          "key" : 131,
+          "action" : "PAUSE"
+        }
+      ],
+      "states" : [
+        {
+          "key" : 19,
+          "state" : "MOVE_UP"
+        },
+        {
+          "key" : 20,
+          "state" : "MOVE_DOWN"
+        },
+        {
+          "key" : 21,
+          "state" : "MOVE_LEFT"
+        },
+        {
+          "key" : 22,
+          "state" : "MOVE_RIGHT"
+        },
+        {
+          "key" : 51,
+          "state" : "MOVE_UP"
+        },
+        {
+          "key" : 47,
+          "state" : "MOVE_DOWN"
+        },
+        {
+          "key" : 29,
+          "state" : "MOVE_LEFT"
+        },
+        {
+          "key" : 32,
+          "state" : "MOVE_RIGHT"
+        }
+      ]
+    }
+  ]
+}
