@@ -7,7 +7,7 @@ class Seek(private val aiBody: Body,
            private val targetPosition: Vector2,
            private val distanceToStop: Float,
            private val speed: Float)
-    : AIBaseSteering() {
+    : AIBaseSteering {
 
     override fun act() {
         val directionVector = getDirectionVector(aiBody.position, targetPosition)

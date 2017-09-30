@@ -7,7 +7,7 @@ class Arrive(private val aiBody: Body,
              private val targetPosition: Vector2,
              private val arriveDistance: Float,
              private val decelerationValue: Float,
-             private val maxSpeed: Float): AIBaseSteering() {
+             private val maxSpeed: Float): AIBaseSteering {
 
 
     override fun act() {

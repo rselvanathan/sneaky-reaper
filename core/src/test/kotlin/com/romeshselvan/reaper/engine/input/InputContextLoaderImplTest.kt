@@ -7,7 +7,7 @@ import io.kotlintest.matchers.shouldBe
 import org.junit.Test
 
 class InputContextLoaderImplTest {
-    private val inputContextLoader : InputContextLoader = InputContextLoaderImpl
+    private val inputContextLoader = InputContextLoader.getInputContextLoader();
 
     @Test
     fun `Loader should load the json object passed in correctly producing a list of contexts`() {
