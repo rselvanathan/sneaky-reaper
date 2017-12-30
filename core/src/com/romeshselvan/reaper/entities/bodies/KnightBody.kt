@@ -31,21 +31,21 @@ class KnightBody(body: Body,
     }
 
     override fun onCollision(otherBody: Body, collidedFixtureType: FixtureType) {
-        if(isAIChaseCheck(collidedFixtureType) && isPlayer(otherBody)) {
+        if(isSensor(collidedFixtureType) && isPlayer(otherBody)) {
             world.rayCast(this, body.position, otherBody.position)
         }
     }
 
     override fun onCollisionEnd(otherBody: Body, collidedFixtureType: FixtureType) {
-        if(isAIChaseCheck(collidedFixtureType) && isPlayer(otherBody)) {
+        if(isInnerSensor(collidedFixtureType) && isPlayer(otherBody)) {
             world.rayCast(this, body.position, otherBody.position)
-        } else if(isAIOuterChaseCheck(collidedFixtureType) && isPlayer(otherBody)) {
+        } else if(isOuterSensor(collidedFixtureType) && isPlayer(otherBody)) {
             stopSteering()
         }
     }
 
     override fun reportRayFixture(fixture: Fixture?, point: Vector2?, normal: Vector2?, fraction: Float): Float {
-        if((fixture?.body?.userData as EntityBody).bodyType == EntityTypes.Wall) {
+        if(!isPlayer(fixture!!)) {
             stopSteering()
             return 0.0f
         }
@@ -54,8 +54,11 @@ class KnightBody(body: Body,
     }
 
     private fun isPlayer(otherBody: Body) : Boolean = (otherBody.userData as EntityBody).bodyType == EntityTypes.Player
-    private fun isAIChaseCheck(fixtureType: FixtureType) : Boolean = fixtureType == FixtureType.AI_CHASE_CHECK
-    private fun isAIOuterChaseCheck(fixtureType: FixtureType) : Boolean = fixtureType == FixtureType.AI_OUTER_CHASE_CHECK
+    private fun isPlayer(collidedFixture : Fixture) : Boolean =
+            (collidedFixture.body!!.userData as EntityBody).bodyType == EntityTypes.Player
+    private fun isInnerSensor(fixtureType: FixtureType) : Boolean = fixtureType == FixtureType.AI_CHASE_CHECK
+    private fun isOuterSensor(fixtureType: FixtureType) : Boolean = fixtureType == FixtureType.AI_OUTER_CHASE_CHECK
+    private fun isSensor(fixtureType: FixtureType) : Boolean = isInnerSensor(fixtureType) || isOuterSensor(fixtureType)
     private fun stopSteering() {
         enableSteering = false
         arriveSteering.stop()
