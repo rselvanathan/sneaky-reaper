@@ -17,6 +17,10 @@ class Arrive(private val aiBody: Body,
         aiBody.linearVelocity = getVelocity(directionVector, (speed/distance), distance, arriveDistance)
     }
 
+    override fun stop() {
+        aiBody.linearVelocity = Vector2(0.0f, 0.0f)
+    }
+
     private fun calculateSpeed(uncappedSpeed: Float, maxSpeed: Float): Float =
             if(uncappedSpeed > maxSpeed) maxSpeed else uncappedSpeed
 }

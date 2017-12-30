@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.romeshselvan.reaper.defaults.GameStates
+import com.romeshselvan.reaper.engine.collision.FixtureType
 import com.romeshselvan.reaper.engine.entities.EntityBody
 import com.romeshselvan.reaper.engine.input.data.State
 import com.romeshselvan.reaper.engine.input.listeners.InputStateListener
@@ -36,11 +37,11 @@ class ReaperBody(body: Body, private val camera: OrthographicCamera): EntityBody
         }
     }
 
-    override fun onCollision(otherBody: Body) {
+    override fun onCollision(otherBody: Body, collidedFixtureType: FixtureType) {
         // Do Nothing
     }
 
-    override fun onCollisionEnd(otherBody: Body) {
+    override fun onCollisionEnd(otherBody: Body, collidedFixtureType: FixtureType) {
         // Do Nothing
     }
 

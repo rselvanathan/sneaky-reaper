@@ -8,12 +8,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.maps.MapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
-import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.FixtureDef
-import com.badlogic.gdx.physics.box2d.PolygonShape
-import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.physics.box2d.*
 import com.romeshselvan.reaper.assets.KnightTextures
 import com.romeshselvan.reaper.assets.ReaperTextures
+import com.romeshselvan.reaper.engine.collision.FixtureType
 import com.romeshselvan.reaper.engine.entities.EntityBody
 import com.romeshselvan.reaper.engine.eventManager.EventManager
 import com.romeshselvan.reaper.engine.input.events.StatePressedEvent
@@ -40,6 +38,9 @@ interface GameObjectProducer {
 }
 
 private object GameObjectProducerImpl : GameObjectProducer {
+
+    private val POINT_LIGHT_FILTER_CATEGORY: Short = 0x0016
+    private val SENSOR_FILTER_CATEGORY: Short = 0x0001
 
     override fun generateReaper(world: World, tiledMap: TiledMap, camera: OrthographicCamera, eventManager: EventManager): ReaperEntity {
         val reaperStartPosition: MapObject = tiledMap.layers["ObjectPositions"].objects["start"]
@@ -71,6 +72,7 @@ private object GameObjectProducerImpl : GameObjectProducer {
         val x = mapObject.properties["x", Float::class.java]
         val y = mapObject.properties["y", Float::class.java]
         val pointLight = PointLight(rayHandler, 200, Color.YELLOW, 350.0f, x, y)
+        pointLight.setContactFilter(getPointLightFilter())
         pointLight.setSoftnessLength(100.0f)
     }
 
@@ -94,7 +96,7 @@ private object GameObjectProducerImpl : GameObjectProducer {
         val boxPolygonShape = getBoxPolygonShape(initialSprite.width / 3, initialSprite.height / 2)
         val fixtureDef = getDefaultFixtureDef(boxPolygonShape)
 
-        mainBody.createFixture(fixtureDef)
+        mainBody.createFixture(fixtureDef).userData = FixtureType.DEFAULT_BODY
         boxPolygonShape.dispose()
 
         val reaperBody = ReaperBody(mainBody, camera)
@@ -108,11 +110,11 @@ private object GameObjectProducerImpl : GameObjectProducer {
     }
 
     private fun makeWall(world: World, xPos: Float, yPos: Float, width: Float, height: Float): WallEntity {
-        val staticBody = getStaticBody(xPos, yPos, width, height)
+        val staticBody = getStaticBody(xPos, yPos)
         val mainBody = world.createBody(staticBody)
         val boxPolygonShape = getBoxPolygonShape(width, height)
         val defaultFixtureDef = getDefaultFixtureDef(boxPolygonShape)
-        mainBody.createFixture(defaultFixtureDef)
+        mainBody.createFixture(defaultFixtureDef).userData = FixtureType.DEFAULT_BODY
         boxPolygonShape.dispose()
         return WallEntity(WallBody(mainBody))
     }
@@ -124,8 +126,16 @@ private object GameObjectProducerImpl : GameObjectProducer {
         val defaultFixtureDef = getDefaultFixtureDef(boxPolygonShape)
         val coneLight = ConeLight(rayHandler, 100, Color.RED, 250.0f, xPos, yPos, 90.0f, 35.0f)
 
-        mainBody.createFixture(defaultFixtureDef)
+        mainBody.createFixture(defaultFixtureDef).userData = FixtureType.DEFAULT_BODY
         boxPolygonShape.dispose()
+
+        // Generate Sensor Fixture
+        val circlePolygonShape = getCirclePolygonShape(xPos, yPos, 200.0f)
+        val bodyCheckFixture = mainBody.createFixture(getCircularSensor(circlePolygonShape))
+        bodyCheckFixture.userData = FixtureType.AI_CHASE_CHECK
+        bodyCheckFixture.filterData = getSensorFilter()
+
+        circlePolygonShape.dispose()
 
         return KnightEntity(KnightBody(mainBody, targetEntity, coneLight), KnightSprite(initialSprite))
     }
@@ -138,11 +148,18 @@ private object GameObjectProducerImpl : GameObjectProducer {
         return bodyDef
     }
 
-    private fun getStaticBody(xPos: Float, yPos: Float, width: Float, height: Float): BodyDef {
+    private fun getStaticBody(xPos: Float, yPos: Float): BodyDef {
         val bodyDef = BodyDef()
         bodyDef.type = BodyDef.BodyType.StaticBody
         bodyDef.position.set(xPos, yPos)
         return bodyDef
+    }
+
+    private fun getCircularSensor(circleShape: CircleShape) : FixtureDef {
+        val bodyCheckFixtureDef = FixtureDef()
+        bodyCheckFixtureDef.shape = circleShape
+        bodyCheckFixtureDef.isSensor = true
+        return bodyCheckFixtureDef
     }
 
     private fun getBoxPolygonShape(width: Float, height: Float): PolygonShape {
@@ -151,11 +168,33 @@ private object GameObjectProducerImpl : GameObjectProducer {
         return polygonShape
     }
 
+    private fun getCirclePolygonShape(xPos: Float, yPos: Float, radius: Float): CircleShape {
+        val circleShape = CircleShape()
+        circleShape.position.set(xPos, yPos)
+        circleShape.radius = radius
+        return circleShape
+    }
+
     private fun getDefaultFixtureDef(polygonShape: PolygonShape): FixtureDef {
         val fixtureDef = FixtureDef()
         fixtureDef.shape = polygonShape
         fixtureDef.density = 1.0f
         fixtureDef.restitution = 0.0f
-        return fixtureDef;
+        return fixtureDef
+    }
+
+    private fun getSensorFilter() : Filter {
+        val filter = Filter()
+        filter.categoryBits = SENSOR_FILTER_CATEGORY
+        // Collide with everything
+        filter.maskBits = 1
+        return filter
+    }
+
+    private fun getPointLightFilter() : Filter {
+        val filter = Filter()
+        filter.categoryBits = POINT_LIGHT_FILTER_CATEGORY
+        filter.maskBits = SENSOR_FILTER_CATEGORY
+        return filter
     }
 }

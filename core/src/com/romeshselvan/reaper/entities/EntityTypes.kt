@@ -4,10 +4,7 @@ import com.romeshselvan.reaper.engine.entities.EntityType
 
 object EntityTypes {
 
-    private var counter: Int = 0
-    private fun getId(): Int = counter.plus(1)
-
-    object Player : EntityType(getId())
-    object Wall : EntityType(getId())
-    object Knight : EntityType(getId())
+    object Player : EntityType(1)
+    object Wall : EntityType(2)
+    object Knight : EntityType(3)
 }

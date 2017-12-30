@@ -15,4 +15,8 @@ class Seek(private val aiBody: Body,
         directionVector.nor()
         aiBody.linearVelocity = getVelocity(directionVector, speed, distanceToTarget, distanceToStop)
     }
+
+    override fun stop() {
+        aiBody.linearVelocity = Vector2(0.0f, 0.0f)
+    }
 }
