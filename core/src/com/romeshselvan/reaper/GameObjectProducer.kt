@@ -129,15 +129,28 @@ private object GameObjectProducerImpl : GameObjectProducer {
         mainBody.createFixture(defaultFixtureDef).userData = FixtureType.DEFAULT_BODY
         boxPolygonShape.dispose()
 
-        // Generate Sensor Fixture
-        val circlePolygonShape = getCirclePolygonShape(xPos, yPos, 200.0f)
-        val bodyCheckFixture = mainBody.createFixture(getCircularSensor(circlePolygonShape))
-        bodyCheckFixture.userData = FixtureType.AI_CHASE_CHECK
-        bodyCheckFixture.filterData = getSensorFilter()
+        // Generate Sensor Fixtures
+        val outerRangeCheckShape = getCirclePolygonShape(xPos, yPos, 200.0f)
+        val midRangeCheckShape = getCirclePolygonShape(xPos, yPos, 130.0f)
+        val closeRangeCheckShape = getCirclePolygonShape(xPos, yPos, 80.0f)
 
-        circlePolygonShape.dispose()
+        val outerCheckFixture = mainBody.createFixture(getCircularSensor(outerRangeCheckShape))
+        outerCheckFixture.userData = FixtureType.AI_OUTER_CHASE_CHECK
+        outerCheckFixture.filterData = getSensorFilter()
 
-        return KnightEntity(KnightBody(mainBody, targetEntity, coneLight), KnightSprite(initialSprite))
+        val midCheckFixture = mainBody.createFixture(getCircularSensor(midRangeCheckShape))
+        midCheckFixture.userData = FixtureType.AI_CHASE_CHECK
+        midCheckFixture.filterData = getSensorFilter()
+
+        val closeCheckFixture = mainBody.createFixture(getCircularSensor(closeRangeCheckShape))
+        closeCheckFixture.userData = FixtureType.AI_CHASE_CHECK
+        closeCheckFixture.filterData = getSensorFilter()
+
+        outerRangeCheckShape.dispose()
+        midRangeCheckShape.dispose()
+        closeRangeCheckShape.dispose()
+
+        return KnightEntity(KnightBody(mainBody, targetEntity, world, coneLight), KnightSprite(initialSprite))
     }
 
     private fun getDynamicBody(xPos: Float, yPos: Float): BodyDef {
