@@ -3,6 +3,11 @@ package com.romeshselvan.reaper.assets
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Array
 
+/**
+ * Load the Textures and organise the raw "Reaper" Texture Sheet into different animation sets
+ *
+ * @author Romesh Selvanathan
+ */
 object ReaperTextures {
     private val dimension = 64
 

@@ -6,6 +6,11 @@ import com.badlogic.gdx.physics.box2d.ContactListener
 import com.badlogic.gdx.physics.box2d.Manifold
 import com.romeshselvan.reaper.engine.entities.EntityBody
 
+/**
+ * Passes the collision data to the appropriate objects once the event has been received from the LibGDX Framework
+ *
+ * @author Romesh Selvanathan
+ */
 object CollisionHandler: ContactListener {
 
     override fun preSolve(contact: Contact?, oldManifold: Manifold?) {

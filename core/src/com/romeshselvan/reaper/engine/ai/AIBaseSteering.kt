@@ -2,7 +2,12 @@ package com.romeshselvan.reaper.engine.ai
 
 import com.badlogic.gdx.math.Vector2
 
-interface AIBaseSteering: AISteeringBehaviour {
+/**
+ * Some Base Steering Functions for all AI Steering Behaviours
+ *
+ * @author Romesh Selvanathan
+ */
+interface AIBaseSteering {
 
     fun getDirectionVector(fromVector: Vector2, targetVector: Vector2) =
             Vector2(targetVector.x - fromVector.x, targetVector.y - fromVector.y)

@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.romeshselvan.reaper.assets.ReaperTextures
-import com.romeshselvan.reaper.defaults.GameStates
+import com.romeshselvan.reaper.defaults.InputStates
 import com.romeshselvan.reaper.engine.entities.SpriteObject
 import com.romeshselvan.reaper.engine.input.data.State
 import com.romeshselvan.reaper.engine.input.listeners.InputStateListener
@@ -42,31 +42,31 @@ class ReaperSprite(sprite: Sprite): SpriteObject(sprite), InputStateListener {
 
     override fun onStatePressed(state: State) {
         when(state.stateId) {
-            GameStates.MOVE_UP.name -> upAnimate = true
-            GameStates.MOVE_DOWN.name -> downAnimate = true
-            GameStates.MOVE_RIGHT.name -> rightAnimate = true
-            GameStates.MOVE_LEFT.name -> leftAnimate = true
+            InputStates.MOVE_UP.name -> upAnimate = true
+            InputStates.MOVE_DOWN.name -> downAnimate = true
+            InputStates.MOVE_RIGHT.name -> rightAnimate = true
+            InputStates.MOVE_LEFT.name -> leftAnimate = true
         }
     }
 
     override fun onStateReleased(state: State) {
         when(state.stateId) {
-            GameStates.MOVE_UP.name -> {
+            InputStates.MOVE_UP.name -> {
                 sprite.setRegion(ReaperTextures.upFacingSet[0])
                 animateFrameTime = 0.2f
                 upAnimate = false
             }
-            GameStates.MOVE_DOWN.name -> {
+            InputStates.MOVE_DOWN.name -> {
                 sprite.setRegion(ReaperTextures.downFacingSet[0])
                 animateFrameTime = 0.2f
                 downAnimate = false
             }
-            GameStates.MOVE_RIGHT.name -> {
+            InputStates.MOVE_RIGHT.name -> {
                 sprite.setRegion(ReaperTextures.rightFacingSet[0])
                 animateFrameTime = 0.2f
                 rightAnimate = false
             }
-            GameStates.MOVE_LEFT.name -> {
+            InputStates.MOVE_LEFT.name -> {
                 sprite.setRegion(ReaperTextures.leftFacingSet[0])
                 animateFrameTime = 0.2f
                 leftAnimate = false

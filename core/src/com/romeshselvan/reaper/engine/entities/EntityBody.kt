@@ -3,6 +3,11 @@ package com.romeshselvan.reaper.engine.entities
 import com.badlogic.gdx.physics.box2d.Body
 import com.romeshselvan.reaper.engine.collision.FixtureType
 
+/**
+ * Will handle any physics related logic for the Entity it represents
+ *
+ * @author Romesh Selvanathan
+ */
 abstract class EntityBody(val body: Body, val maxSpeed: Float, val bodyType: EntityType) {
 
     init {

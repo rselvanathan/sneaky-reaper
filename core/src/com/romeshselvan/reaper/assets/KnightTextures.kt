@@ -3,6 +3,11 @@ package com.romeshselvan.reaper.assets
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Array
 
+/**
+ * Load the Textures and organise the raw "Knight" Texture Sheet into different animation sets
+ *
+ * @author Romesh Selvanathan
+ */
 object KnightTextures {
     private val width = 48
     private val height = 72

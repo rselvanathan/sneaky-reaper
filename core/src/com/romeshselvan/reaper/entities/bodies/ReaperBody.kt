@@ -3,7 +3,7 @@ package com.romeshselvan.reaper.entities.bodies
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
-import com.romeshselvan.reaper.defaults.GameStates
+import com.romeshselvan.reaper.defaults.InputStates
 import com.romeshselvan.reaper.engine.collision.FixtureType
 import com.romeshselvan.reaper.engine.entities.EntityBody
 import com.romeshselvan.reaper.engine.input.data.State
@@ -21,19 +21,19 @@ class ReaperBody(body: Body, private val camera: OrthographicCamera): EntityBody
 
     override fun onStatePressed(state: State) {
         when(state.stateId) {
-            GameStates.MOVE_UP.name -> additiveVelocity.y += maxSpeed
-            GameStates.MOVE_DOWN.name -> additiveVelocity.y += maxSpeed * -1.0f
-            GameStates.MOVE_LEFT.name -> additiveVelocity.x += maxSpeed * -1.0f
-            GameStates.MOVE_RIGHT.name -> additiveVelocity.x += maxSpeed
+            InputStates.MOVE_UP.name -> additiveVelocity.y += maxSpeed
+            InputStates.MOVE_DOWN.name -> additiveVelocity.y += maxSpeed * -1.0f
+            InputStates.MOVE_LEFT.name -> additiveVelocity.x += maxSpeed * -1.0f
+            InputStates.MOVE_RIGHT.name -> additiveVelocity.x += maxSpeed
         }
     }
 
     override fun onStateReleased(state: State) {
         when(state.stateId) {
-            GameStates.MOVE_UP.name -> additiveVelocity.y += maxSpeed * -1.0f
-            GameStates.MOVE_DOWN.name -> additiveVelocity.y += maxSpeed
-            GameStates.MOVE_LEFT.name -> additiveVelocity.x += maxSpeed
-            GameStates.MOVE_RIGHT.name -> additiveVelocity.x += maxSpeed * -1.0f
+            InputStates.MOVE_UP.name -> additiveVelocity.y += maxSpeed * -1.0f
+            InputStates.MOVE_DOWN.name -> additiveVelocity.y += maxSpeed
+            InputStates.MOVE_LEFT.name -> additiveVelocity.x += maxSpeed
+            InputStates.MOVE_RIGHT.name -> additiveVelocity.x += maxSpeed * -1.0f
         }
     }
 
