@@ -13,6 +13,8 @@ interface AIBaseSteering {
             Vector2(targetVector.x - fromVector.x, targetVector.y - fromVector.y)
 
     fun getVelocity(directionVector2: Vector2, speed: Float, distanceToTarget: Float, distanceToStop: Float) =
-            if(distanceToTarget > distanceToStop) Vector2(directionVector2.x * speed, directionVector2.y * speed)
-            else Vector2(0.0f, 0.0f)
+            if(distanceToTarget > distanceToStop)
+                Vector2(directionVector2.x * speed, directionVector2.y * speed)
+            else
+                Vector2(0.0f, 0.0f)
 }

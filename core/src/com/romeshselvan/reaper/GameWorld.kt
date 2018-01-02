@@ -52,7 +52,7 @@ class GameWorld(gameObjectProducer: GameObjectProducer,
 
         rayHandler.setCombinedMatrix(camera)
         rayHandler.updateAndRender()
-//        debugRenderer.render(world, camera.combined)
+        debugRenderer.render(world, camera.combined)
     }
 
     fun dispose() {

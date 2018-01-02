@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.maps.MapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.romeshselvan.reaper.assets.KnightTextures
 import com.romeshselvan.reaper.assets.ReaperTextures
@@ -42,17 +43,21 @@ private object GameObjectProducerImpl : GameObjectProducer {
     private val POINT_LIGHT_FILTER_CATEGORY: Short = 0x0016
     private val SENSOR_FILTER_CATEGORY: Short = 0x0001
 
-    override fun generateReaper(world: World, tiledMap: TiledMap, camera: OrthographicCamera, eventManager: EventManager): ReaperEntity {
+    override fun generateReaper(world: World, tiledMap: TiledMap, camera: OrthographicCamera,
+                                eventManager: EventManager): ReaperEntity {
         val reaperStartPosition: MapObject = tiledMap.layers["ObjectPositions"].objects["start"]
         val x = reaperStartPosition.properties["x", Float::class.java]
         val y = reaperStartPosition.properties["y", Float::class.java]
         return makeReaper(world, x, y, camera, eventManager)
     }
 
-    override fun generateKnights(world: World, rayHandler: RayHandler, tiledMap: TiledMap, targetEntity: EntityBody): List<KnightEntity> {
+    override fun generateKnights(world: World, rayHandler: RayHandler, tiledMap: TiledMap,
+                                 targetEntity: EntityBody): List<KnightEntity> {
+        // First Knight value in tiled is set to 1
+        var iterator = 1
         return tiledMap.layers["ObjectPositions"]
                 .objects.filter { it.properties["type", String::class.java] == "knight" }
-                .map { generateKnightFromMapObject(world, rayHandler, targetEntity, it) }
+                .map { generateKnightFromMapObject(world, rayHandler, targetEntity, it, iterator++, tiledMap) }
     }
 
     override fun generateWalls(world: World, tiledMap: TiledMap): List<WallEntity> {
@@ -84,10 +89,22 @@ private object GameObjectProducerImpl : GameObjectProducer {
         return makeWall(world, x+width, y+height, width, height)
     }
 
-    private fun generateKnightFromMapObject(world: World, rayHandler: RayHandler, targetEntity: EntityBody, mapObject: MapObject): KnightEntity {
+    private fun generateKnightFromMapObject(world: World, rayHandler: RayHandler, targetEntity: EntityBody,
+                                            mapObject: MapObject, knightIterator: Int, tiledMap: TiledMap): KnightEntity {
+        val patrolDestinations = getPatrolDestinations(knightIterator, tiledMap)
         val x = mapObject.properties["x", Float::class.java]
         val y = mapObject.properties["y", Float::class.java]
-        return makeKnight(world, rayHandler, x, y, targetEntity)
+        return makeKnight(world, rayHandler, x, y, targetEntity, patrolDestinations)
+    }
+
+    private fun getPatrolDestinations(knightIterator: Int, tiledMap: TiledMap) : List<Vector2> {
+        val mapObjectList = tiledMap.layers["ObjectPositions"]
+                .objects.filter { it.properties["type", String::class.java] == "knightPatrolPosition" &&
+                                  it.properties["knightNumber", Int::class.java] == knightIterator }
+                .toCollection(mutableListOf())
+        mapObjectList.sortBy { it.properties["positionNumber", Int::class.java] }
+        return mapObjectList.map { Vector2(it.properties["x", Float::class.java],
+                                           it.properties["y", Float::class.java]) }
     }
 
     private fun makeReaper(world: World, xPos: Float, yPos: Float, camera: OrthographicCamera, eventManager: EventManager): ReaperEntity {
@@ -119,7 +136,7 @@ private object GameObjectProducerImpl : GameObjectProducer {
         return WallEntity(WallBody(mainBody))
     }
 
-    private fun makeKnight(world: World, rayHandler: RayHandler, xPos: Float, yPos: Float, targetEntity: EntityBody): KnightEntity {
+    private fun makeKnight(world: World, rayHandler: RayHandler, xPos: Float, yPos: Float, targetEntity: EntityBody, patrolDestinations: List<Vector2>): KnightEntity {
         val mainBody = world.createBody(getDynamicBody(xPos, yPos))
         val initialSprite = Sprite(KnightTextures.upFacingSet[0])
         val boxPolygonShape = getBoxPolygonShape(initialSprite.width / 3, initialSprite.height / 2)
@@ -150,7 +167,8 @@ private object GameObjectProducerImpl : GameObjectProducer {
         midRangeCheckShape.dispose()
         closeRangeCheckShape.dispose()
 
-        return KnightEntity(KnightBody(mainBody, targetEntity, world, coneLight), KnightSprite(initialSprite))
+        return KnightEntity(KnightBody(mainBody, targetEntity, patrolDestinations, world, coneLight),
+                            KnightSprite(initialSprite))
     }
 
     private fun getDynamicBody(xPos: Float, yPos: Float): BodyDef {

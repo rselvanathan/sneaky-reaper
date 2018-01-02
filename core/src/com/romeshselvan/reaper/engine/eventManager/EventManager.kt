@@ -13,7 +13,7 @@ interface EventManager {
     }
 }
 
-private object EventManagerImpl: EventManager {
+object EventManagerImpl: EventManager {
     private val listenerMap: MutableMap<KClass<out Event<*>>, MutableList<Any>> = mutableMapOf()
 
     override fun addListener(listener : Any, clazz: KClass<out Event<*>>) {
