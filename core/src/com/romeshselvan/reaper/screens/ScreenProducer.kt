@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.romeshselvan.reaper.GameObjectProducer
 import com.romeshselvan.reaper.GameWorld
 import com.romeshselvan.reaper.defaults.ScreenType
 import com.romeshselvan.reaper.engine.collision.CollisionHandler
@@ -18,6 +17,6 @@ object ScreenProducer {
     }
 
     private fun getGameWorld() =
-            GameWorld.getInstance(GameObjectProducer.getGameObjectProducer(), CollisionHandler, EventManager.getEventManager(),
+            GameWorld.getInstance(CollisionHandler, EventManager.getEventManager(),
                     OrthographicCamera(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat()))
 }

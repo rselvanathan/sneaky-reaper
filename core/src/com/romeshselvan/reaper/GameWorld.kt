@@ -16,7 +16,6 @@ import com.romeshselvan.reaper.engine.eventManager.EventManager
 
 class GameWorld(gameObjectProducer: GameObjectProducer,
                 collisionListener: ContactListener,
-                eventManager: EventManager,
                 private val camera: OrthographicCamera,
                 private var entityList: MutableList<Entity>,
                 private val world: World,
@@ -28,9 +27,9 @@ class GameWorld(gameObjectProducer: GameObjectProducer,
 
     init {
         world.setContactListener(collisionListener)
-        val reaper = gameObjectProducer.generateReaper(world, tileMap, camera, eventManager)
+        val reaper = gameObjectProducer.generateReaper(tileMap)
         entityList.add(reaper)
-        entityList.addAll(gameObjectProducer.generateWalls(world, tileMap))
+        entityList.addAll(gameObjectProducer.generateWalls(tileMap))
         entityList.addAll(gameObjectProducer.generateKnights(world, rayHandler, tileMap, reaper.body))
         gameObjectProducer.generateWallLights(rayHandler, tileMap)
         rayHandler.setAmbientLight(0.0f, 0.0f, 0.0f, 0.4f)
@@ -61,16 +60,15 @@ class GameWorld(gameObjectProducer: GameObjectProducer,
     }
 
     companion object {
-        fun getInstance(gameObjectProducer: GameObjectProducer,
-                        collisionListener: ContactListener,
+        fun getInstance(collisionListener: ContactListener,
                         eventManager: EventManager,
                         camera: OrthographicCamera): GameWorld {
             val world = World(Vector2(0.0f, 0.0f), false)
             val tiledMap = TmxMapLoader().load("level1.tmx")
             val tiledMapRenderer = OrthoCachedTiledMapRenderer(tiledMap)
             val rayHandler = RayHandler(world)
-            return GameWorld(gameObjectProducer, collisionListener, eventManager, camera, mutableListOf(), world,
-                    rayHandler, tiledMap, tiledMapRenderer)
+            return GameWorld(GameObjectProducer.getGameObjectProducer(world, camera, eventManager), collisionListener,
+                    camera, mutableListOf(), world, rayHandler, tiledMap, tiledMapRenderer)
         }
     }
 }
